@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        .chat-container {
+            width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .message {
+            margin-bottom: 10px;
+        }
+        .user-label {
+            font-weight: bold;
+            color: blue;
+        }
+        .assistant-label {
+            font-weight: bold;
+            color: green;
+        }
+        .system-label {
+            font-weight: bold;
+            color: gray;
+        }
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .initial-message {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="title">Book Recommendation Bot</div>
+        <div class="initial-message">
+            Hi, this is a book recommendation chatbot BookWorth. In order for it to recommend books, please provide the required inputs asked by the bot. Once you have entered all the inputs, the bot will ask you to upload an image. After uploading the image, click on the Send button and wait for the recommendations to be displayed. If you want to reset the chat, then type 'reset' and send.
+        </div>
+        <div id="chat-history">
+            {% for message in chat_history %}
+                {% if message.role == "user" %}
+                    <div class="message user-label">User: {{ message.content }}</div>
+                {% elif message.role == "assistant" %}
+                    <div class="message assistant-label">BookWorth: {{ message.content }}</div>
+                {% elif message.role == "system" %}
+                    <div class="message system-label">{{ message.content }}</div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <form id="user-input-form" action="/chat" method="post" enctype="multipart/form-data">
+            <input type="text" id="user-input" name="user_input" placeholder="Type your message here...">
+            <input type="file" id="image-upload" name="image" accept="image/*">
+            <button type="submit" id="send-button">Send</button>
+        </form>
+    </div>
+
+    <script>
+        // Scroll to bottom of chat history
+        document.getElementById('chat-history').scrollTop = document.getElementById('chat-history').scrollHeight;
+
+        // Auto-scroll to bottom on new message
+        document.getElementById('user-input-form').addEventListener('submit', function() {
+            setTimeout(() => {
+                document.getElementById('chat-history').scrollTop = document.getElementById('chat-history').scrollHeight;
+            }, 100);
+        });
+    </script>
+</body>
+</html>
