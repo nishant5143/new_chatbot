@@ -37,7 +37,6 @@ def extract_json(chat_history):
 
 def update_book_recommendation(data):
     file_name = "book_recommendation.csv"
-
     if os.path.exists(file_name):
         existing_df = pd.read_csv(file_name)
     else:
@@ -49,3 +48,15 @@ def update_book_recommendation(data):
 
     updated_df.to_csv(file_name, index=False)
     print("Data entry to csv file successful")
+
+
+def add_image_path(image_path):
+    filename = 'book_recommendation.csv'
+    df = pd.read_csv(filename)
+
+    if 'image_url' not in df.columns:
+        df['image_url'] = ''
+
+    last_row_index = len(df)
+    df.iloc[last_row_index - 1, 'image_url'] = image_path
+    df.to_csv(filename, index=False)
