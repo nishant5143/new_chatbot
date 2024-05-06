@@ -1,20 +1,20 @@
 import json
 import re
-import os
+
 import pandas as pd
 
 
 def extract_book_details(chat_history):
-    text = chat_history[0]['content']
-    pattern = r'\[(Category|category): ([\w-]+), (Book Name|book_name): ([\w\s]+), (Author Name|author_name): ([\w\s]+)\]'
+    text = chat_history[0]["content"]
+    pattern = r"\[(Category|category): ([\w-]+), (Book Name|book_name): ([\w\s]+), (Author Name|author_name): ([\w\s]+)\]"
 
     match = re.search(pattern, text)
 
     if match:
         data = {
-            'category': match.group(2).lower(),
-            'book_name': match.group(4).lower(),
-            'author_name': match.group(6).lower()
+            "category": match.group(2).lower(),
+            "book_name": match.group(4).lower(),
+            "author_name": match.group(6).lower(),
         }
         return True, data
     else:
@@ -22,9 +22,9 @@ def extract_book_details(chat_history):
 
 
 def extract_json(chat_history):
-    text = chat_history[0]['content']
-    start = text.find('{')
-    end = text.rfind('}') + 1
+    text = chat_history[0]["content"]
+    start = text.find("{")
+    end = text.rfind("}") + 1
 
     # Extract the JSON string
     json_str = text[start:end]
@@ -37,26 +37,17 @@ def extract_json(chat_history):
 
 def update_book_recommendation(data):
     file_name = "book_recommendation.csv"
-    if os.path.exists(file_name):
-        existing_df = pd.read_csv(file_name)
-    else:
-        existing_df = pd.DataFrame(columns=['category', 'book_name', 'author_name'])
-
     new_df = pd.DataFrame([data])
-
-    updated_df = pd.concat([existing_df, new_df], ignore_index=True)
-
-    updated_df.to_csv(file_name, index=False)
+    new_df.to_csv(file_name, index=False)
     print("Data entry to csv file successful")
 
 
 def add_image_path(image_path):
-    filename = 'book_recommendation.csv'
+    filename = "book_recommendation.csv"
     df = pd.read_csv(filename)
 
-    if 'image_url' not in df.columns:
-        df['image_url'] = ''
+    if "image_url" not in df.columns:
+        df["image_url"] = ""
 
-    last_row_index = len(df)
-    df.iloc[last_row_index - 1, 'image_url'] = image_path
+    df.iloc[-1, df.columns.get_loc("image_url")] = image_path
     df.to_csv(filename, index=False)

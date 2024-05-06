@@ -2,8 +2,10 @@ import itertools
 import os
 
 import pinecone
-from pinecone import Pinecone, PodSpec
 from langchain_community.embeddings import HuggingFaceEmbeddings
+from pinecone import Pinecone, ServerlessSpec
+
+from config import EMBEDDING_DIM
 
 
 def get_embeddings(model_name="sentence-transformers/all-MiniLM-L6-v2", device="cpu"):
@@ -35,11 +37,11 @@ def prepare_vectors_and_metadata(chunk, embed_model):
 
 class PineconeDB:
 
-    def __init__(self, index_name, dim=384):
+    def __init__(self, index_name, dim=EMBEDDING_DIM):
         self.dim = dim
         self.index_name = index_name
         try:
-            self.pinecone_instance = Pinecone(api_key=os.environ['PINECONE_API_KEY'])
+            self.pinecone_instance = Pinecone(api_key=os.environ["PINECONE_API_KEY"])
             if index_name not in self.list_indexes():
                 self._create_index()
         except pinecone.exceptions.PineconeException as e:
@@ -52,7 +54,7 @@ class PineconeDB:
                 name=self.index_name,
                 dimension=self.dim,
                 metric="cosine",
-                spec=PodSpec(environment="gcp-starter"),
+                spec=ServerlessSpec(cloud="aws", region="us-east-1"),
             )
             print(self.pinecone_instance.describe_index(self.index_name))
             print(f"Index {self.index_name} successfully created ...")
@@ -75,8 +77,8 @@ class PineconeDB:
             index = self.pinecone_instance.Index(self.index_name)
             return index.query(
                 vector=query_vector,
-                top_k=10,
-                include_values=False,
+                top_k=20,
+                include_values=True,
                 include_metadata=True,
             )
         except pinecone.exceptions.PineconeException as pe:

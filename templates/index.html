@@ -18,11 +18,13 @@
         }
         .user-label {
             font-weight: bold;
-            color: blue;
+            text-align: right;
+            color: black;
         }
         .assistant-label {
             font-weight: bold;
-            color: green;
+            text-align: left;
+            color: brown;
         }
         .system-label {
             font-weight: bold;
@@ -42,39 +44,62 @@
     </style>
 </head>
 <body>
-    <div class="chat-container">
-        <div class="title">Book Recommendation Bot</div>
-        <div class="initial-message">
-            Hi, this is a book recommendation chatbot BookWorth. In order for it to recommend books, please provide the required inputs asked by the bot. Once you have entered all the inputs, the bot will ask you to upload an image. After uploading the image, click on the Send button and wait for the recommendations to be displayed. If you want to reset the chat, then type 'reset' and send.
-        </div>
-        <div id="chat-history">
-            {% for message in chat_history %}
-                {% if message.role == "user" %}
-                    <div class="message user-label">User: {{ message.content }}</div>
-                {% elif message.role == "assistant" %}
-                    <div class="message assistant-label">BookWorth: {{ message.content }}</div>
-                {% elif message.role == "system" %}
-                    <div class="message system-label">{{ message.content }}</div>
-                {% endif %}
-            {% endfor %}
-        </div>
-        <form id="user-input-form" action="/chat" method="post" enctype="multipart/form-data">
-            <input type="text" id="user-input" name="user_input" placeholder="Type your message here...">
-            <input type="file" id="image-upload" name="image" accept="image/*">
-            <button type="submit" id="send-button">Send</button>
-        </form>
+<div class="chat-container">
+    <div class="title">Book Recommendation Bot</div>
+    <div class="initial-message">
+        Hi, this is a book recommendation chatbot BookWorth. In order for it to recommend books, please provide the
+        required inputs asked by the bot. Once you have entered all the inputs, the bot will ask you to upload an image.
+        After uploading the image, click on the Send button and wait for the recommendations to be displayed. If you
+        want to reset the chat, then type 'reset' and send.
     </div>
+    <div id="chat-history">
+        {% for message in chat_history %}
+        {% if message.role == "user" %}
+        <div class="message user-label">User: {{ message.content }}</div>
+        {% elif message.role == "assistant" %}
+        <div class="message assistant-label">BookWorth: {{ message.content }}</div>
+        {% elif message.role == "system" %}
+        <div class="message system-label">{{ message.content }}</div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <!-- Display Results -->
+    {% if result_dicts %}
+    <div class="result">
+        <div class="title">Results</div>
+        {% for result_dict in result_dicts %}
+        <div class="message">
+            <p>Book Name: {{ result_dict.book_name }}</p>
+            <p>Author Name: {{ result_dict.author_name }}</p>
+            <p>Price: {{ result_dict.price }}</p>
+            {% if result_dict.image_base64 %}
+            <img src="data:image/jpeg;base64,{{ result_dict.image_base64 }}" alt="Book Cover" style="max-width: 200px;">
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <!-- End Display Results -->
+    <form id="user-input-form" action="/chat" method="post" enctype="multipart/form-data">
+        <input type="text" id="user-input" name="user_input" placeholder="Type your message here...">
+        <button type="submit" id="send-button">Send</button>
+        <input type="file" id="image-upload" name="image" accept="image/jpeg, image/png">
+    </form>
+    <form id="show-result-form" action="/chat" method="get">
+        <button type="submit" id="result-button">Show Result</button>
+    </form>
+</div>
 
-    <script>
-        // Scroll to bottom of chat history
-        document.getElementById('chat-history').scrollTop = document.getElementById('chat-history').scrollHeight;
+<script>
+    // Scroll to bottom of chat history
+    document.getElementById('chat-history').scrollTop = document.getElementById('chat-history').scrollHeight;
 
-        // Auto-scroll to bottom on new message
-        document.getElementById('user-input-form').addEventListener('submit', function() {
-            setTimeout(() => {
-                document.getElementById('chat-history').scrollTop = document.getElementById('chat-history').scrollHeight;
-            }, 100);
-        });
-    </script>
+    // Auto-scroll to bottom on new message
+    document.getElementById('user-input-form').addEventListener('submit', function() {
+        setTimeout(() => {
+            document.getElementById('chat-history').scrollTop = document.getElementById('chat-history').scrollHeight;
+        }, 100);
+    });
+</script>
 </body>
 </html>
