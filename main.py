@@ -1,4 +1,6 @@
 from together import Together
+import os
+
 
 client = Together()
 

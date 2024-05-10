@@ -1,11 +1,10 @@
 certifi==2024.2.2
-clip==1.0
 flask==3.0.3
 langchain-community==0.0.36
 numpy==1.26.4
 pandas==2.2.2
 Pillow==10.3.0
-pinecone==4.0.0
+pinecone-client==4.0.0
 scikit-learn==1.4.2
 sentence-transformers==2.7.0
 together==1.1.4

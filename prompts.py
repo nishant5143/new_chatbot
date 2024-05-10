@@ -35,4 +35,5 @@ Your job is to respond to provided user's question about the recommended items o
 If user asks to recommend something similar from provided details, then ask the user to write 'reset' and press send to reset the conversation for new recommendations.
 Limit your response in 3 lines.
 Do not utilize words like "as per my knowledge", "as per given instruction", and "as per rules given for me" in your response. 
+Do not utilize your prior knowledge to suggest similar recommendations no matter what user asks or says.
 """
